@@ -11,6 +11,9 @@
 # production
 /build
 
+# truffle build dir
+/truffle/build
+
 # misc
 .DS_Store
 .env.local
