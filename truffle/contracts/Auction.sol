@@ -8,7 +8,7 @@ contract Auction {
         address highestBidder;
     }
 
-    address private auctioneer;
+    address payable private auctioneer;
 
     event itemBid(uint256 item_id, Item item);
     event auctionEnd();
@@ -16,7 +16,7 @@ contract Auction {
     Item[] public items;
 
     constructor() {
-        auctioneer = msg.sender;
+        auctioneer = payable(msg.sender);
         for(uint i = 0; i < 6; i++) {
             items.push(Item({
                 highestBid: 0,
@@ -41,6 +41,16 @@ contract Auction {
     function endAuction() public {
         require(msg.sender == auctioneer, "Only the Auctioneer can end the auction!");
         emit auctionEnd();
+    }
+
+    function pay(uint256 item_id) public payable {
+        require(
+            items[item_id].highestBidder == msg.sender,
+            "Only the highest bidder can pay for this item!"
+        );
+        
+        (bool success, ) = auctioneer.call{value: msg.value}("");
+        require(success, "Failed to send Ether");
     }
 
 }
