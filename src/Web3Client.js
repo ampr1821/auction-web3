@@ -50,16 +50,6 @@ export const init = async () => {
     .on('error', (error, receipt) => {
       console.log(error);
     });
-    
-
-    // greetContract.events.newMessage({}, (err, event_) => {
-    //   console.log(event_.returnValues.msg);
-    // })
-    // .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-    //     console.log(error)
-    // });
-
-    // greetContract.methods.setValue(7535345).send({from: selectedAccount});
 }
 
 async function updateItems(event_data) {
@@ -75,14 +65,6 @@ export const placeBid = (item_id) => {
   console.log('Placing bid')
   if(items.length) {
     items[item_id].highestBid += 5;
-    auctionContract.methods.placeBid(item_id, items[item_id].highestBid).send({from: selectedAccount});
+    auctionContract.methods.placeBid(item_id, Math.round(items[item_id].highestBid)).send({from: selectedAccount}).catch((err) => console.log(err));
   }
 }
-
-// export const greet = () => {
-//   return greetContract.methods.greet().send({from: selectedAccount});
-// }
-
-// export const getval = () => {
-//   return greetContract.methods.getValue().call({from: selectedAccount});
-// }

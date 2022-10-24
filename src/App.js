@@ -7,8 +7,6 @@ function App() {
 
   useEffect(() => {
     init();
-    const x = document.getElementById('1-hbid');
-    x.textContent = "0.05 ETH";
   }, []);
   
   return (
