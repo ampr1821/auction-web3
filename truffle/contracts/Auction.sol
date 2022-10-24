@@ -10,7 +10,7 @@ contract Auction {
 
     address private auctioneer;
 
-    event itemBid(uint256 item_id, uint256 price);
+    event itemBid(uint256 item_id, Item item);
     event auctionEnd();
 
     Item[] public items;
@@ -27,11 +27,11 @@ contract Auction {
 
     function placeBid(uint256 item_id, uint256 price) public {
         require(price > items[item_id].highestBid, "The Current bid is lower than the highest bid!");
-        
-        emit itemBid(item_id, price);
 
         items[item_id].highestBid = price;
         items[item_id].highestBidder = msg.sender;
+
+        emit itemBid(item_id, items[item_id]);
     }
 
     function getItem(uint256 item_id) public view returns (Item memory) {
