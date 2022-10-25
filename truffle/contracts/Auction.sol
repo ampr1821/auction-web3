@@ -6,6 +6,7 @@ contract Auction {
     struct Item {
         uint256 highestBid;
         address highestBidder;
+        bool isPaid;
     }
 
     address payable private auctioneer;
@@ -20,7 +21,8 @@ contract Auction {
         for(uint i = 0; i < 6; i++) {
             items.push(Item({
                 highestBid: 0,
-                highestBidder: address(0)
+                highestBidder: address(0),
+                isPaid: false
             }));
         }
     }
@@ -51,6 +53,7 @@ contract Auction {
         
         (bool success, ) = auctioneer.call{value: msg.value}("");
         require(success, "Failed to send Ether");
+        items[item_id].isPaid = true;
     }
 
 }

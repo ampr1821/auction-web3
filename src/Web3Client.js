@@ -6,6 +6,7 @@ let selectedAccount;
 let auctionContract;
 const providerUrl = 'ws://localhost:7545';
 let networkId;
+let pay_lock = false;
 
 let items = [];
 
@@ -39,7 +40,7 @@ export const init = async () => {
 
     for(let i = 0; i < 6; i++) {
       let promise_obj = await auctionContract.methods.getItem(i).call({from: selectedAccount});
-      items.push({highestBid: Number(promise_obj.highestBid), highestBidder: promise_obj.highestBidder, paid: false});
+      items[i] = {highestBid: Number(promise_obj.highestBid), highestBidder: promise_obj.highestBidder, paid: false};
       document.getElementById(i + 1 + '-hbid').textContent = Number(promise_obj.highestBid) / 1000 + ' ETH';
     }
 
@@ -55,6 +56,8 @@ export const init = async () => {
     auctionContract.events.auctionEnd({}, async (err, event_) => {
       console.log('Auction ended!');
       console.log(`Account address: ${selectedAccount}`);
+      if(pay_lock == false) {
+        pay_lock = true;
         for(let i = 0; i < 6; i++) {
           let promise_obj = await auctionContract.methods.getItem(i).call({from: selectedAccount});
           items[i].highestBid = Number(promise_obj.highestBid);
@@ -71,14 +74,16 @@ export const init = async () => {
               'from': selectedAccount,
               'to': AuctionBuild.networks[networkId].address,
               'value': amt_hex,
-              'gas' : '31944',
               'data': auctionContract.methods.pay(i).encodeABI()
             }
             // auctionContract.methods.pay(i).send({from: selectedAccount, value: promise_obj.highestBid});
-            await window.ethereum.request({method: 'eth_sendTransaction', params: [tx]});
+            let res = await window.ethereum.request({method: 'eth_sendTransaction', params: [tx]});
+            updateCards(i);
+            console.log(res);
             items[i].paid = true;
           }
         }
+      }
     })
     .on('error', (error, receipt) => {
       console.log(error);
@@ -96,6 +101,7 @@ async function updateItems(event_data) {
   let t_item = items[event_data.returnValues.item_id];
   t_item.highestBid = Number(event_data.returnValues.item.highestBid);
   t_item.highestBidder = event_data.returnValues.item.highestBidder;
+  t_item.paid = event_data.returnValues.item.isPaid;
   updateCards(event_data.returnValues.item_id);
 }
 
