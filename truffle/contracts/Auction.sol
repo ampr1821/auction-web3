@@ -15,6 +15,7 @@ contract Auction {
     event auctionEnd();
 
     Item[] public items;
+    uint256 status;
 
     constructor() {
         auctioneer = payable(msg.sender);
@@ -25,6 +26,7 @@ contract Auction {
                 isPaid: false
             }));
         }
+        status = 0;
     }
 
     function placeBid(uint256 item_id, uint256 price) public {
@@ -43,6 +45,7 @@ contract Auction {
     function endAuction() public {
         require(msg.sender == auctioneer, "Only the Auctioneer can end the auction!");
         emit auctionEnd();
+        status = 1;
     }
 
     function pay(uint256 item_id) public payable {
@@ -55,5 +58,8 @@ contract Auction {
         require(success, "Failed to send Ether");
         items[item_id].isPaid = true;
     }
-
+    
+    function auctionStatus() public view returns (uint256) {
+        return status;
+    }
 }
