@@ -76,11 +76,13 @@ export const init = async () => {
     let promise_obj = await auctionContract.methods.getItem(i).call({from: selectedAccount});
     items[i] = {highestBid: Number(promise_obj.highestBid), highestBidder: promise_obj.highestBidder, paid: promise_obj.isPaid, highestBidderName: promise_obj.highestBidderName};
     document.getElementById(i + 1 + '-hbid').textContent = Number(promise_obj.highestBid) / 1000 + ' ETH';
+    document.getElementById(i + 1 + '-name').textContent = promise_obj.highestBidderName;
   }
 
   // console.log(items);
-
-  bidderName = prompt("Enter Name");
+  if(bidderName===undefined) {
+    bidderName = prompt("Enter Name");    
+  }
 
   auctionContract.events.itemBid({}, (err, event_) => {
     updateItems(event_);
@@ -104,7 +106,8 @@ export const init = async () => {
 function updateCards(t_item_id) {
   let t_item = Number(t_item_id) + 1 + '-hbid';
   let t_text = Number(items[t_item_id].highestBid) / 1000;
-  let t_bidderName = 'name' + Number(t_item_id) + 1;
+  let t_bidderName = Number(t_item_id) + 1 + '-name';
+  // console.log(t_bidderName);
   document.getElementById(t_item).textContent = t_text + ' ETH';
   document.getElementById(t_bidderName).textContent = items[t_item_id].highestBidderName;
 }
