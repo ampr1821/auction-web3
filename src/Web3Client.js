@@ -122,5 +122,5 @@ export const placeBid = (item_id) => {
 }
 
 export const endAuct = () => {
-  auctionContract.methods.endAuction().send({from: selectedAccount}).catch((err) => console.log(err));
+  auctionContract.methods.endAuction().send({from: selectedAccount}).catch((err) => alert(JSON.parse("{" + err.message.match(/"reason":"[a-zA-Z0-9 !]*/) + "\"}").reason));
 }
