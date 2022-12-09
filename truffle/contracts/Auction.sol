@@ -6,6 +6,7 @@ contract Auction {
     struct Item {
         uint256 highestBid;
         address highestBidder;
+        string highestBidderName;
         bool isPaid;
     }
 
@@ -23,17 +24,19 @@ contract Auction {
             items.push(Item({
                 highestBid: 0,
                 highestBidder: address(0),
-                isPaid: false
+                isPaid: false,
+                highestBidderName:""
             }));
         }
         status = 0;
     }
 
-    function placeBid(uint256 item_id, uint256 price) public {
+    function placeBid(uint256 item_id, uint256 price, string calldata name) public {
         require(price > items[item_id].highestBid, "The Current bid is lower than the highest bid!");
 
         items[item_id].highestBid = price;
         items[item_id].highestBidder = msg.sender;
+        items[item_id].highestBidderName = name;
 
         emit itemBid(item_id, items[item_id]);
     }
