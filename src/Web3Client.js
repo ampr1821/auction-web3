@@ -72,7 +72,7 @@ export const init = async () => {
 
     for(let i = 0; i < 6; i++) {
       let promise_obj = await auctionContract.methods.getItem(i).call({from: selectedAccount});
-      items[i] = {highestBid: Number(promise_obj.highestBid), highestBidder: promise_obj.highestBidder, paid: false};
+      items[i] = {highestBid: Number(promise_obj.highestBid), highestBidder: promise_obj.highestBidder, paid: promise_obj.isPaid};
       document.getElementById(i + 1 + '-hbid').textContent = Number(promise_obj.highestBid) / 1000 + ' ETH';
     }
 
