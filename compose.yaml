@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  ganache:
+    image: trufflesuite/ganache:latest
+    restart: always
+    command: -p 7545 -h 0.0.0.0
+    ports:
+      - 7545:7545
+
+  auction-app:
+    build:
+      context: .
+    depends_on:
+      - ganache
+    ports:
+      - 3000:3000

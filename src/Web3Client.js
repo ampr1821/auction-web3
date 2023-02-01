@@ -66,7 +66,7 @@ export const init = async () => {
     });
   }
 
-  const web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
+  const web3 = new Web3(Web3.givenProvider || "http://ganache:7545");
 
   networkId = await web3.eth.net.getId();
 
